@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KMASLANKA // SYSTEM TERMINAL</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Orbitron:wght@400;700&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0a0a0f;
+  --panel: #0d0d14;
+  --border: #1a3a2a;
+  --accent: #00ff66;
+  --accent-dim: #00cc52;
+  --accent-dark: #003d1a;
+  --accent-scanline: rgba(0,255,102,0.03);
+  --accent-glow: rgba(0,255,102,0.3);
+  --text: #d0d0d0;
+  --text-bright: #f0f0f0;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+  --font-display: 'Orbitron', sans-serif;
+}
+
+/* Theme: Green (default) */
+[data-theme="green"] {
+  --border: #1a3a2a;
+  --accent: #00ff66;
+  --accent-dim: #00cc52;
+  --accent-dark: #003d1a;
+  --accent-scanline: rgba(0,255,102,0.03);
+  --accent-glow: rgba(0,255,102,0.3);
+}
+
+/* Theme: Amber */
+[data-theme="amber"] {
+  --border: #3a2a1a;
+  --accent: #ffaa00;
+  --accent-dim: #cc8800;
+  --accent-dark: #3d2800;
+  --accent-scanline: rgba(255,170,0,0.03);
+  --accent-glow: rgba(255,170,0,0.3);
+}
+
+/* Theme: Cyan */
+[data-theme="cyan"] {
+  --border: #1a2a3a;
+  --accent: #00ddff;
+  --accent-dim: #00aacc;
+  --accent-dark: #002a3d;
+  --accent-scanline: rgba(0,221,255,0.03);
+  --accent-glow: rgba(0,221,255,0.3);
+}
+
+/* Theme: Red */
+[data-theme="red"] {
+  --border: #3a1a1a;
+  --accent: #ff3333;
+  --accent-dim: #cc2222;
+  --accent-dark: #3d0a0a;
+  --accent-scanline: rgba(255,51,51,0.03);
+  --accent-glow: rgba(255,51,51,0.3);
+}
+
+/* Theme: White */
+[data-theme="white"] {
+  --border: #2a2a2a;
+  --accent: #ffffff;
+  --accent-dim: #cccccc;
+  --accent-dark: #222222;
+  --accent-scanline: rgba(255,255,255,0.02);
+  --accent-glow: rgba(255,255,255,0.2);
+}
+
+html { font-size: 14px; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, var(--accent-scanline) 2px, var(--accent-scanline) 4px);
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Background cyber ops */
+#cyber-bg {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.cyber-column {
+  position: absolute;
+  top: 0;
+  width: 200px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.5;
+  color: var(--accent);
+  opacity: 0.06;
+  white-space: pre;
+  animation: scrollUp linear infinite;
+}
+.cyber-column:nth-child(1) { left: 2%; animation-duration: 45s; }
+.cyber-column:nth-child(2) { right: 2%; animation-duration: 38s; animation-delay: -10s; }
+.cyber-column:nth-child(3) { left: 25%; animation-duration: 52s; animation-delay: -20s; opacity: 0.04; }
+.cyber-column:nth-child(4) { right: 25%; animation-duration: 42s; animation-delay: -5s; opacity: 0.04; }
+@keyframes scrollUp {
+  0% { transform: translateY(100vh); }
+  100% { transform: translateY(-100%); }
+}
+
+/* Threat matrix overlay */
+.threat-bar {
+  position: fixed;
+  bottom: 50px;
+  left: 20px;
+  z-index: 1;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--accent);
+  opacity: 0.12;
+  pointer-events: none;
+  line-height: 1.6;
+  max-width: 280px;
+}
+.threat-bar .threat-header {
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid;
+  padding-bottom: 2px;
+}
+.threat-entry { opacity: 0.8; }
+.threat-entry.new { animation: threatFlash 2s ease; }
+@keyframes threatFlash {
+  0% { opacity: 1; color: #fff; }
+  100% { opacity: 0.8; }
+}
+
+#boot-screen {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--bg);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  transition: opacity 0.8s ease;
+}
+#boot-screen.hidden { opacity: 0; pointer-events: none; }
+#boot-text {
+  font-family: var(--font-mono);
+  color: var(--accent);
+  font-size: 13px;
+  white-space: pre;
+  line-height: 1.6;
+  text-shadow: 0 0 8px var(--accent);
+  max-width: 600px;
+  padding: 20px;
+}
+
+#main-container {
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+}
+#main-container.visible { opacity: 1; }
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  margin-bottom: 16px;
+  font-size: 11px;
+  color: var(--accent-dim);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+.top-bar .status-dot {
+  display: inline-block;
+  width: 6px; height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  margin-right: 6px;
+  box-shadow: 0 0 6px var(--accent);
+  animation: pulse-dot 2s infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+#clock { color: var(--text); }
+
+.ascii-header {
+  text-align: center;
+  margin: 20px 0 30px;
+  font-size: 11px;
+  line-height: 1.2;
+  color: var(--accent);
+  text-shadow: 0 0 10px var(--accent), 0 0 20px var(--accent-glow);
+  white-space: pre;
+  overflow: hidden;
+}
+
+.subtitle-bar {
+  text-align: center;
+  color: var(--accent-dim);
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  margin-bottom: 30px;
+  text-shadow: 0 0 10px var(--accent-dark);
+}
+
+.nav-tabs {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 0;
+  flex-wrap: wrap;
+}
+.nav-tab {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  color: var(--text);
+  padding: 8px 20px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.2s;
+  position: relative;
+}
+.nav-tab:hover { color: var(--accent); border-color: var(--accent-dim); }
+.nav-tab.active {
+  color: var(--accent);
+  background: var(--bg);
+  border-color: var(--accent-dim);
+  border-bottom: 1px solid var(--bg);
+  z-index: 2;
+  text-shadow: 0 0 8px var(--accent);
+}
+.nav-tab.active::before { content: '> '; color: var(--accent); }
+
+.window-frame {
+  border: 1px solid var(--border);
+  background: var(--bg);
+  position: relative;
+  margin-top: -1px;
+}
+.window-titlebar {
+  background: linear-gradient(90deg, var(--accent-dark), transparent);
+  padding: 4px 12px;
+  font-size: 10px;
+  color: var(--accent-dim);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+}
+.window-titlebar .dots { display: flex; gap: 4px; align-items: center; }
+.window-titlebar .dot { width: 8px; height: 8px; border-radius: 50%; border: 1px solid; }
+.window-titlebar .dot.r { border-color: #ff4444; background: #ff444433; }
+.window-titlebar .dot.y { border-color: #ffaa00; background: #ffaa0033; }
+.window-titlebar .dot.g { border-color: #00ff66; background: #00ff6633; }
+
+.window-content { padding: 24px; min-height: 300px; }
+
+.section-panel { display: none; }
+.section-panel.active { display: block; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.section-label {
+  font-family: var(--font-display);
+  font-size: 12px;
+  color: var(--accent);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+  text-shadow: 0 0 6px var(--accent);
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.info-block {
+  border: 1px solid var(--border);
+  padding: 16px;
+  background: var(--panel);
+}
+.info-block .label {
+  font-size: 10px;
+  color: var(--accent-dim);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.info-block .value { color: var(--text-bright); line-height: 1.6; }
+.info-block a { color: var(--accent); text-decoration: none; }
+.info-block a:hover { text-shadow: 0 0 6px var(--accent); }
+
+.summary-text {
+  color: var(--text);
+  line-height: 1.8;
+  margin-top: 20px;
+  padding: 16px;
+  border-left: 2px solid var(--accent-dark);
+}
+.summary-text .highlight { color: var(--accent); }
+
+/* Skills */
+.skills-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.skill-item { padding: 8px 0; }
+.skill-name { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 12px; }
+.skill-name span:first-child { color: var(--text-bright); }
+.skill-name span:last-child { color: var(--accent-dim); font-size: 10px; }
+.skill-bar { height: 4px; background: var(--panel); border: 1px solid var(--border); overflow: hidden; }
+.skill-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-dark), var(--accent));
+  box-shadow: 0 0 6px var(--accent);
+  width: 0%;
+  transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.core-strengths { margin-top: 24px; }
+.strength-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+.strength-card {
+  border: 1px solid var(--border);
+  padding: 14px;
+  background: var(--panel);
+  transition: border-color 0.3s;
+}
+.strength-card:hover { border-color: var(--accent); }
+.strength-card .icon {
+  color: var(--accent);
+  font-size: 16px;
+  margin-bottom: 6px;
+  text-shadow: 0 0 8px var(--accent);
+}
+.strength-card .title {
+  color: var(--accent);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+.strength-card .desc { font-size: 11px; color: var(--text); line-height: 1.5; }
+
+/* Timeline */
+.timeline { position: relative; padding-left: 20px; }
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 1px;
+  background: var(--border);
+}
+.timeline-item { position: relative; margin-bottom: 28px; padding-left: 20px; }
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -24px; top: 6px;
+  width: 8px; height: 8px;
+  border: 1px solid var(--accent);
+  background: var(--accent-dark);
+  box-shadow: 0 0 6px var(--accent);
+}
+.timeline-item .role { color: var(--accent); font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+.timeline-item .company { color: var(--accent-dim); font-size: 12px; margin: 2px 0; }
+.timeline-item .date { color: var(--text); font-size: 10px; text-transform: uppercase; letter-spacing: 2px; opacity: 0.6; margin-bottom: 8px; }
+.timeline-item ul { list-style: none; padding: 0; }
+.timeline-item li { font-size: 12px; color: var(--text); line-height: 1.7; padding-left: 16px; position: relative; }
+.timeline-item li::before { content: '>'; position: absolute; left: 0; color: var(--accent-dim); }
+
+/* Projects */
+.projects-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+}
+.project-card {
+  border: 1px solid var(--border);
+  background: var(--panel);
+  padding: 20px;
+  transition: all 0.3s;
+}
+.project-card:hover { border-color: var(--accent-dim); box-shadow: 0 0 12px var(--accent-glow); }
+.project-card .proj-icon { color: var(--accent); font-size: 20px; margin-bottom: 10px; text-shadow: 0 0 8px var(--accent); }
+.project-card .proj-title { color: var(--text-bright); font-size: 13px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.project-card .proj-desc { font-size: 11px; color: var(--text); line-height: 1.6; margin-bottom: 12px; }
+.project-card .proj-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.tag { font-size: 9px; padding: 2px 8px; border: 1px solid var(--border); color: var(--accent-dim); text-transform: uppercase; letter-spacing: 1px; }
+
+/* Education */
+.edu-certs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.cert-list { list-style: none; padding: 0; }
+.cert-list li {
+  padding: 6px 0 6px 28px;
+  position: relative;
+  font-size: 12px;
+  color: var(--text);
+  border-bottom: 1px solid #111;
+}
+.cert-list li::before { content: '[ ] '; position: absolute; left: 0; color: var(--text); }
+.cert-list li.done::before { content: '[x] '; color: var(--accent); }
+.cert-list li.done { color: var(--accent-dim); }
+
+/* References */
+.refs-lock {
+  text-align: center;
+  padding: 40px 20px;
+}
+.refs-lock .lock-icon {
+  font-size: 24px;
+  color: var(--accent-dim);
+  margin-bottom: 16px;
+}
+.refs-lock p {
+  color: var(--text);
+  margin-bottom: 16px;
+  font-size: 12px;
+}
+.refs-input-group {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  align-items: center;
+}
+#refs-password {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  padding: 8px 14px;
+  letter-spacing: 3px;
+  text-align: center;
+  width: 200px;
+  outline: none;
+}
+#refs-password:focus { border-color: var(--accent); box-shadow: 0 0 8px var(--accent-glow); }
+#refs-password::placeholder { color: #333; letter-spacing: 1px; }
+.refs-submit {
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 8px 16px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s;
+}
+.refs-submit:hover { background: var(--accent); color: var(--bg); }
+.refs-error {
+  color: #ff3333;
+  font-size: 11px;
+  margin-top: 12px;
+  display: none;
+}
+.refs-content { display: none; }
+.refs-content .ref-card {
+  border: 1px solid var(--border);
+  background: var(--panel);
+  padding: 16px;
+  margin-bottom: 12px;
+}
+.refs-content .ref-name { color: var(--accent); font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+.refs-content .ref-title { color: var(--accent-dim); font-size: 11px; margin: 4px 0; }
+.refs-content .ref-contact { color: var(--text); font-size: 11px; }
+.refs-content .ref-contact a { color: var(--accent); text-decoration: none; }
+
+/* Contact / footer */
+.contact-bar {
+  margin-top: 30px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+.contact-bar a {
+  color: var(--text);
+  text-decoration: none;
+  font-size: 12px;
+  transition: color 0.2s;
+  letter-spacing: 1px;
+}
+.contact-bar a:hover { color: var(--accent); text-shadow: 0 0 6px var(--accent); }
+.contact-bar a span.lbl {
+  color: var(--accent-dim);
+  margin-right: 6px;
+  text-transform: uppercase;
+  font-size: 10px;
+}
+
+.footer-line {
+  text-align: center;
+  font-size: 10px;
+  color: #333;
+  margin-top: 16px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.download-btn {
+  display: inline-block;
+  padding: 8px 20px;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: all 0.3s;
+  cursor: pointer;
+  background: transparent;
+}
+.download-btn:hover {
+  background: var(--accent);
+  color: var(--bg);
+  box-shadow: 0 0 16px var(--accent-glow);
+}
+
+/* Theme switcher */
+.theme-switcher {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9998;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+}
+.theme-switcher .ts-label {
+  font-size: 9px;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-right: 4px;
+}
+.theme-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid #333;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.theme-dot:hover { border-color: #666; }
+.theme-dot.active { border-color: #fff; box-shadow: 0 0 6px currentColor; }
+.theme-dot[data-theme="green"] { background: #00ff66; }
+.theme-dot[data-theme="amber"] { background: #ffaa00; }
+.theme-dot[data-theme="cyan"] { background: #00ddff; }
+.theme-dot[data-theme="red"] { background: #ff3333; }
+.theme-dot[data-theme="white"] { background: #ffffff; }
+
+/* Tab command overlay */
+.cmd-overlay {
+  display: none;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--accent);
+  padding: 40px 24px;
+  min-height: 300px;
+  text-shadow: 0 0 6px var(--accent);
+}
+.cmd-overlay.active { display: block; }
+.cmd-cursor {
+  display: inline-block;
+  animation: cursorBlink 0.5s step-end infinite;
+}
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .about-grid, .skills-grid, .strength-grid, .edu-certs-grid { grid-template-columns: 1fr; }
+  .projects-grid { grid-template-columns: 1fr; }
+  .ascii-header { font-size: 7px; }
+  .nav-tab { padding: 6px 12px; font-size: 11px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Background Cyber Ops -->
+<div id="cyber-bg">
+  <div class="cyber-column" id="cyber-col-1"></div>
+  <div class="cyber-column" id="cyber-col-2"></div>
+  <div class="cyber-column" id="cyber-col-3"></div>
+  <div class="cyber-column" id="cyber-col-4"></div>
+</div>
+<div class="threat-bar" id="threat-bar">
+  <div class="threat-header">Active Threat Matrix</div>
+  <div id="threat-feed"></div>
+</div>
+
+<!-- Boot Screen -->
+<div id="boot-screen">
+  <div id="boot-text"></div>
+</div>
+
+<!-- Main Content -->
+<div id="main-container">
+  <div class="top-bar">
+    <div><span class="status-dot"></span> SYSTEM ONLINE</div>
+    <div>KMASLANKA TERMINAL v2.6</div>
+    <div id="clock">00:00:00</div>
+  </div>
+
+  <div class="ascii-header" id="ascii-art">
+ _  __ __  __    _    ____  _        _    _   _ _  __    _
+| |/ /|  \/  |  / \  / ___|| |      / \  | \ | | |/ /   / \
+| ' / | |\/| | / _ \ \___ \| |     / _ \ |  \| | ' /   / _ \
+| . \ | |  | |/ ___ \ ___) | |___ / ___ \| |\  | . \  / ___ \
+|_|\_\|_|  |_/_/   \_\____/|_____/_/   \_\_| \_|_|\_\/_/   \_\</div>
+
+  <div class="subtitle-bar">Cybersecurity // OSINT // Threat Intelligence // Malware Analysis</div>
+
+  <div class="nav-tabs">
+    <div class="nav-tab active" data-tab="about">About</div>
+    <div class="nav-tab" data-tab="skills">Skills</div>
+    <div class="nav-tab" data-tab="experience">Experience</div>
+    <div class="nav-tab" data-tab="projects">Projects</div>
+    <div class="nav-tab" data-tab="education">Education</div>
+    <div class="nav-tab" data-tab="references">References</div>
+  </div>
+
+  <div class="window-frame">
+    <div class="window-titlebar">
+      <span id="window-title">// ABOUT.SYS</span>
+      <div class="dots">
+        <div class="dot r"></div>
+        <div class="dot y"></div>
+        <div class="dot g"></div>
+      </div>
+    </div>
+    <div class="window-content">
+      <div class="cmd-overlay" id="cmd-overlay"></div>
+
+      <!-- ABOUT -->
+      <div class="section-panel active" id="tab-about">
+        <div class="section-label">// Identification</div>
+        <div class="about-grid">
+          <div class="info-block">
+            <div class="label">Operative</div>
+            <div class="value">Kevin Maslanka</div>
+          </div>
+          <div class="info-block">
+            <div class="label">Location</div>
+            <div class="value">Port Washington, Wisconsin</div>
+          </div>
+          <div class="info-block">
+            <div class="label">Comms</div>
+            <div class="value"><a href="mailto:kevinmaslanka94@gmail.com">kevinmaslanka94@gmail.com</a></div>
+          </div>
+          <div class="info-block">
+            <div class="label">Network</div>
+            <div class="value"><a href="https://linkedin.com/in/kevin-maslanka-625001b2" target="_blank">LinkedIn Profile</a></div>
+          </div>
+        </div>
+        <div class="summary-text">
+          I grew up immersed in online communities, forums, and multiplayer gaming environments &mdash;
+          spaces where social engineering, deception, and trust exploitation happen in real time. That
+          early exposure taught me something most people learn the hard way: the biggest vulnerability
+          in any system is the human element. It's what drew me to <span class="highlight">Open-Source Intelligence
+          (OSINT)</span> investigations, <span class="highlight">digital footprint analysis</span>, and understanding
+          how attackers weaponize publicly available information. Today I conduct independent security
+          research, <span class="highlight">malware reverse engineering</span>, and <span class="highlight">dark web
+          operations</span> to study adversary tradecraft and threat actor behavior. I maintain a personal
+          cybersecurity lab running Linux environments and security tooling for hands-on analysis. My
+          professional background spans enterprise IT support, physical security infrastructure, and
+          AV systems &mdash; including serving <span class="highlight">3,000+ customers</span> across major
+          corporate campuses, supporting a <span class="highlight">$100M facility launch</span>, and training
+          end users adapting to new technology platforms. Known for <span class="highlight">translating complex
+          technical concepts</span> into clear, actionable guidance for non-technical stakeholders. Highly
+          curious, investigative, and driven to solve complex technical problems. Member of CBRE's Rising
+          Professional Organization and Emergency Response Team first responder.
+        </div>
+      </div>
+
+      <!-- SKILLS -->
+      <div class="section-panel" id="tab-skills">
+        <div class="section-label">// Technical Capabilities</div>
+        <div class="skills-grid">
+          <div class="skill-item">
+            <div class="skill-name"><span>OSINT Investigations & Digital Footprint Analysis</span><span>92%</span></div>
+            <div class="skill-bar"><div class="skill-fill" data-width="92"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-name"><span>Security Research & Threat Intelligence</span><span>85%</span></div>
+            <div class="skill-bar"><div class="skill-fill" data-width="85"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-name"><span>Malware Analysis & Reverse Engineering</span><span>78%</span></div>
+            <div class="skill-bar"><div class="skill-fill" data-width="78"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-name"><span>Dark Web Operations & Adversary Tradecraft</span><span>82%</span></div>
+            <div class="skill-bar"><div class="skill-fill" data-width="82"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-name"><span>TCP/IP & Network Fundamentals</span><span>85%</span></div>
+            <div class="skill-bar"><div class="skill-fill" data-width="85"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-name"><span>Active Directory & Windows Administration</span><span>80%</span></div>
+            <div class="skill-bar"><div class="skill-fill" data-width="80"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-name"><span>Linux Environments & Security Tooling</span><span>70%</span></div>
+            <div class="skill-bar"><div class="skill-fill" data-width="70"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-name"><span>Remote Troubleshooting & End-User Support</span><span>88%</span></div>
+            <div class="skill-bar"><div class="skill-fill" data-width="88"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-name"><span>Access Control & Physical Security Systems</span><span>78%</span></div>
+            <div class="skill-bar"><div class="skill-fill" data-width="78"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-name"><span>Technical Documentation & Reporting</span><span>85%</span></div>
+            <div class="skill-bar"><div class="skill-fill" data-width="85"></div></div>
+          </div>
+        </div>
+
+        <div class="core-strengths">
+          <div class="section-label">// Core Strengths</div>
+          <div class="strength-grid">
+            <div class="strength-card">
+              <div class="icon">[~]</div>
+              <div class="title">OSINT Investigator</div>
+              <div class="desc">Systematic digital footprint analysis, identity correlation, and deep-dive investigative research using OSINT methodology and publicly available sources.</div>
+            </div>
+            <div class="strength-card">
+              <div class="icon">[&gt;]</div>
+              <div class="title">Technical Translator</div>
+              <div class="desc">Bridging the gap between complex security findings and actionable guidance &mdash; making threat intelligence accessible to non-technical decision makers.</div>
+            </div>
+            <div class="strength-card">
+              <div class="icon">[*]</div>
+              <div class="title">Human Factor Analysis</div>
+              <div class="desc">Identifying how attackers exploit human behavior, trust, and social dynamics. Studying social engineering tactics and the psychology behind phishing, pretexting, and manipulation.</div>
+            </div>
+            <div class="strength-card">
+              <div class="icon">[+]</div>
+              <div class="title">Investigative Mindset</div>
+              <div class="desc">Naturally curious and relentlessly thorough. Driven to pull threads, connect disparate data points, and uncover what others overlook.</div>
+            </div>
+            <div class="strength-card">
+              <div class="icon">[!]</div>
+              <div class="title">Malware Research</div>
+              <div class="desc">Analyzing and reverse engineering malicious software to understand adversary capabilities, extract indicators of compromise, and map threat actor techniques.</div>
+            </div>
+            <div class="strength-card">
+              <div class="icon">[$]</div>
+              <div class="title">Adversary Tradecraft</div>
+              <div class="desc">Studying how threat actors operate across the kill chain &mdash; from initial access and lateral movement to data exfiltration and persistence mechanisms.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXPERIENCE -->
+      <div class="section-panel" id="tab-experience">
+        <div class="section-label">// Mission Log</div>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="role">Freelance Security Engineer</div>
+            <div class="company">WebSec B.V.</div>
+            <div class="date">Sep 2023 &mdash; Present</div>
+            <ul>
+              <li>Support senior analysts in complex OSINT investigations</li>
+              <li>Conduct digital footprint analysis using publicly available sources</li>
+              <li>Perform identity correlation using names, usernames, and images</li>
+              <li>Document structured findings in investigative reports</li>
+            </ul>
+          </div>
+          <div class="timeline-item">
+            <div class="role">Electronic Specialist</div>
+            <div class="company">Target</div>
+            <div class="date">Aug 2022 &mdash; Nov 2022</div>
+            <ul>
+              <li>Part-time role while continuing cybersecurity education</li>
+            </ul>
+          </div>
+          <div class="timeline-item">
+            <div class="role">Key Account Manager</div>
+            <div class="company">CH Coakley</div>
+            <div class="date">Sep 2019 &mdash; Feb 2021</div>
+            <ul>
+              <li>Sole system administrator and program manager for asset management software</li>
+              <li>Oversaw the transfer of 20,000 items between businesses</li>
+              <li>Senior employee managing crews, projects, and accounts</li>
+              <li>Created best practices and protocols adopted by customers</li>
+              <li>Consultant for sales and management on new business development</li>
+              <li>Program Manager for inventory systems on commercial operations</li>
+            </ul>
+          </div>
+          <div class="timeline-item">
+            <div class="role">Service Desk Analyst &mdash; SDaaS Team</div>
+            <div class="company">vcpi</div>
+            <div class="date">Mar 2019 &mdash; Aug 2019</div>
+            <ul>
+              <li>Fielded 25-40 calls daily across multiple healthcare clients</li>
+              <li>Administered Active Directory, maintained HIPAA/OSHA/ANSI compliance</li>
+              <li>Proficient in ServiceNow, Citrix, Bomgar, Dameware, ScreenConnect, TightVNC, TeamViewer</li>
+              <li>Managed unique escalation matrices, greetings, and protocols per client</li>
+            </ul>
+          </div>
+          <div class="timeline-item">
+            <div class="role">Information Systems Technician</div>
+            <div class="company">BAYCOM, Inc.</div>
+            <div class="date">Oct 2018 &mdash; Feb 2019</div>
+            <ul>
+              <li>Installed IndigoVision, Panasonic Arbitrator, Motorola RF, and S2 security systems</li>
+              <li>Worked in 911 centers, evidence lockers, courtrooms, police stations, and schools</li>
+              <li>Programmed and trained customers on access control and surveillance equipment</li>
+              <li>Network equipment deployment in government environments</li>
+            </ul>
+          </div>
+          <div class="timeline-item">
+            <div class="role">Custom Installation Tech / Programmer</div>
+            <div class="company">Global Sight and Sound</div>
+            <div class="date">Apr 2018 &mdash; Oct 2018</div>
+            <ul>
+              <li>Residential prewires, access control wiring, security camera installation</li>
+              <li>Programming multi-component universal platforms</li>
+              <li>Network mesh WAP installation, RJ45/RG6 termination, structured wiring</li>
+              <li>Interpreted architectural drawings for project execution</li>
+            </ul>
+          </div>
+          <div class="timeline-item">
+            <div class="role">Audio Visual Coordinator</div>
+            <div class="company">CBRE Global Workplace Solutions</div>
+            <div class="date">Jun 2016 &mdash; Apr 2018</div>
+            <ul>
+              <li>Served 3,000+ customers across all Johnson Controls campuses in Milwaukee</li>
+              <li>Assisted Day One opening of a $100 Million facility project</li>
+              <li>Created Preventative Maintenance standards adopted enterprise-wide</li>
+              <li>Developed conference room guidelines referenced by project managers account-wide</li>
+              <li>Maintained a multi-million dollar AV portfolio</li>
+              <li>Member of CBRE Rising Professional Organization</li>
+              <li>Emergency Response Team first responder for multiple buildings</li>
+            </ul>
+          </div>
+          <div class="timeline-item">
+            <div class="role">Sales Team Lead (Level 3)</div>
+            <div class="company">NM Marketing</div>
+            <div class="date">Aug 2015 &mdash; May 2016</div>
+            <ul>
+              <li>Led sales teams across multi-state territories, traveling 600+ miles for assignments</li>
+              <li>Monthly product knowledge testing and certification</li>
+              <li>Never working in the same location &mdash; high adaptability</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROJECTS -->
+      <div class="section-panel" id="tab-projects">
+        <div class="section-label">// Operations Archive</div>
+        <div class="projects-grid">
+          <div class="project-card">
+            <div class="proj-icon">[#]</div>
+            <div class="proj-title">Community Server Infrastructure</div>
+            <div class="proj-desc">
+              Built and administered dedicated game servers from the ground up,
+              including early infrastructure for the {7th Rangers} Squad community
+              &mdash; which later grew to ~9,000 members. Managed Linux server environments,
+              user permissions, access control policies, plugin configurations,
+              and ongoing performance troubleshooting across multiple platforms.
+            </div>
+            <div class="proj-tags">
+              <span class="tag">Linux</span>
+              <span class="tag">Sysadmin</span>
+              <span class="tag">Networking</span>
+              <span class="tag">Infrastructure</span>
+            </div>
+          </div>
+          <div class="project-card">
+            <div class="proj-icon">[&amp;]</div>
+            <div class="proj-title">Discord Bot &amp; Automation</div>
+            <div class="proj-desc">
+              Designed and deployed custom Discord bots for community
+              management and automation. Implemented role-based access control,
+              automated moderation workflows, and integrated third-party APIs.
+              Diagnosed and resolved performance bottlenecks and API failures.
+            </div>
+            <div class="proj-tags">
+              <span class="tag">API</span>
+              <span class="tag">Automation</span>
+              <span class="tag">RBAC</span>
+              <span class="tag">Scripting</span>
+            </div>
+          </div>
+          <div class="project-card">
+            <div class="proj-icon">[%]</div>
+            <div class="proj-title">GTA V Server Dev &amp; Modding</div>
+            <div class="proj-desc">
+              Developed and configured server-side plugins and custom assets
+              for modded game server environments. Managed configuration files,
+              resolved cross-framework compatibility issues, and performed
+              systematic debugging to maintain server stability and uptime.
+            </div>
+            <div class="proj-tags">
+              <span class="tag">Scripting</span>
+              <span class="tag">Server Admin</span>
+              <span class="tag">Debugging</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EDUCATION -->
+      <div class="section-panel" id="tab-education">
+        <div class="section-label">// Training & Credentials</div>
+        <div class="edu-certs-grid">
+          <div>
+            <div class="info-block" style="margin-bottom:16px">
+              <div class="label">Degree</div>
+              <div class="value" style="color:var(--accent)">Bachelor of Science &mdash; Cybersecurity</div>
+            </div>
+            <div class="info-block" style="margin-bottom:16px">
+              <div class="label">Institution</div>
+              <div class="value">CSU Global<br><span style="font-size:11px;color:var(--text)">(Colorado State University System)</span></div>
+            </div>
+            <div class="info-block">
+              <div class="label">Previous Studies</div>
+              <div class="value">University of Wisconsin-Milwaukee<br><span style="font-size:11px;color:var(--text)">Criminal Justice &amp; Political Science (2013&ndash;2014)</span></div>
+            </div>
+          </div>
+          <div>
+            <div class="info-block">
+              <div class="label">Certifications // Planned</div>
+              <ul class="cert-list">
+                <li class="done">Network+ (Coursework Completed)</li>
+                <li>CompTIA Security+</li>
+                <li>CompTIA CySA+</li>
+                <li>CompTIA Linux+</li>
+                <li>Certified Ethical Hacker (CEH)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REFERENCES -->
+      <div class="section-panel" id="tab-references">
+        <div class="section-label">// Classified Personnel</div>
+        <div class="refs-lock" id="refs-lock">
+          <div class="lock-icon">[LOCKED]</div>
+          <p>This section contains classified reference information.<br>Enter security clearance code to access.</p>
+          <div class="refs-input-group">
+            <input type="password" id="refs-password" placeholder="ACCESS CODE" autocomplete="off">
+            <button class="refs-submit" id="refs-submit">Decrypt</button>
+          </div>
+          <div class="refs-error" id="refs-error">ACCESS DENIED // Invalid clearance code</div>
+        </div>
+        <div class="refs-content" id="refs-content">
+          <div class="section-label" style="color:var(--accent)">// Access Granted &mdash; Clearance Verified</div>
+          <div class="ref-card">
+            <div class="ref-name">Michael Whittington, Ph.D.</div>
+            <div class="ref-contact"><a href="tel:+14088293559">+1 (408) 829-3559</a></div>
+          </div>
+          <div class="ref-card">
+            <div class="ref-name">Dan Ovokaitys</div>
+            <div class="ref-title">CIO &mdash; First Bank</div>
+            <div class="ref-contact"><a href="tel:+16082325972">+1 (608) 232-5972</a></div>
+          </div>
+          <div class="ref-card">
+            <div class="ref-name">Patrick Magill</div>
+            <div class="ref-title">VP Marketing &mdash; The Coca-Cola Company (25+ years)</div>
+            <div class="ref-contact"><a href="tel:+14048624812">+1 (404) 862-4812</a></div>
+          </div>
+          <div class="ref-card">
+            <div class="ref-name">Bill Forrester</div>
+            <div class="ref-title">Finance Professional &mdash; Close Family Friend &amp; Character Reference</div>
+            <div class="ref-contact"><a href="tel:+17739606141">+1 (773) 960-6141</a></div>
+          </div>
+          <div class="ref-card">
+            <div class="ref-name">Jenn Gurley</div>
+            <div class="ref-title">Regional Facilities Manager &mdash; CBRE | Mentor &amp; $100M Project Collaborator</div>
+            <div class="ref-contact"><a href="tel:+17175771066">+1 (717) 577-1066</a></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Contact bar -->
+  <div class="contact-bar">
+    <a href="mailto:kevinmaslanka94@gmail.com"><span class="lbl">Email:</span> kevinmaslanka94@gmail.com</a>
+    <a href="https://linkedin.com/in/kevin-maslanka-625001b2" target="_blank"><span class="lbl">LinkedIn:</span> kevin-maslanka</a>
+    <a href="#" id="resume-download" class="download-btn">[ Download Resume ]</a>
+  </div>
+
+  <div class="footer-line">KMASLANKA Terminal // Session Active // <span id="footer-clock"></span></div>
+</div>
+
+<!-- Theme Switcher -->
+<div class="theme-switcher">
+  <span class="ts-label">Theme</span>
+  <div class="theme-dot active" data-theme="green" title="Green"></div>
+  <div class="theme-dot" data-theme="amber" title="Amber"></div>
+  <div class="theme-dot" data-theme="cyan" title="Cyan"></div>
+  <div class="theme-dot" data-theme="red" title="Red"></div>
+  <div class="theme-dot" data-theme="white" title="White"></div>
+</div>
+
+<script>
+// Boot sequence
+const bootMessages = [
+  'KMASLANKA SYSTEMS v2.6',
+  '========================',
+  '',
+  'Initializing kernel modules...',
+  'Loading security subsystems... OK',
+  'Mounting /dev/osint... OK',
+  'Loading threat detection... OK',
+  'Scanning darknet feeds... OK',
+  'Authenticating session... OK',
+  'Decrypting personnel file... OK',
+  '',
+  'SYSTEM READY.',
+  '',
+  'Welcome, Operator.',
+];
+
+const bootEl = document.getElementById('boot-text');
+const bootScreen = document.getElementById('boot-screen');
+const mainContainer = document.getElementById('main-container');
+let msgIndex = 0;
+let charIndex = 0;
+let bootContent = '';
+
+function typeBoot() {
+  if (msgIndex >= bootMessages.length) {
+    setTimeout(() => {
+      bootScreen.classList.add('hidden');
+      mainContainer.classList.add('visible');
+      animateSkillBars();
+    }, 600);
+    return;
+  }
+  const line = bootMessages[msgIndex];
+  if (charIndex < line.length) {
+    bootContent += line[charIndex];
+    bootEl.textContent = bootContent + '_';
+    charIndex++;
+    setTimeout(typeBoot, 15 + Math.random() * 15);
+  } else {
+    bootContent += '\n';
+    bootEl.textContent = bootContent + '_';
+    msgIndex++;
+    charIndex = 0;
+    setTimeout(typeBoot, msgIndex === bootMessages.length - 1 ? 400 : 80);
+  }
+}
+
+bootScreen.addEventListener('click', () => {
+  bootContent = bootMessages.join('\n');
+  bootEl.textContent = bootContent;
+  bootScreen.classList.add('hidden');
+  mainContainer.classList.add('visible');
+  animateSkillBars();
+});
+
+setTimeout(typeBoot, 500);
+
+// Clock
+function updateClock() {
+  const now = new Date();
+  const t = now.toLocaleTimeString('en-US', { hour12: false });
+  document.getElementById('clock').textContent = t;
+  const fc = document.getElementById('footer-clock');
+  if (fc) fc.textContent = t;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// Tab navigation
+const titleMap = {
+  about: '// ABOUT.SYS',
+  skills: '// SKILLS.DAT',
+  experience: '// EXPERIENCE.LOG',
+  projects: '// PROJECTS.ARC',
+  education: '// EDUCATION.CRT',
+  references: '// REFERENCES.ENC',
+};
+
+// Command file map for terminal animation
+const cmdMap = {
+  about: 'about.sys',
+  skills: 'skills.dat',
+  experience: 'experience.log',
+  projects: 'projects.arc',
+  education: 'education.crt',
+  references: 'references.enc',
+};
+
+let tabSwitching = false;
+
+document.querySelectorAll('.nav-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const target = tab.dataset.tab;
+    if (tabSwitching) return;
+
+    // Update active tab styling immediately
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('window-title').textContent = titleMap[target] || '// SYSTEM';
+
+    // Hide all panels
+    document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
+
+    // Show command overlay with typing animation
+    tabSwitching = true;
+    const overlay = document.getElementById('cmd-overlay');
+    const cmdText = '> cat ' + (cmdMap[target] || 'system');
+    overlay.innerHTML = '';
+    overlay.classList.add('active');
+
+    let ci = 0;
+    function typeCmd() {
+      if (ci < cmdText.length) {
+        overlay.innerHTML = cmdText.substring(0, ci + 1) + '<span class="cmd-cursor">\u2588</span>';
+        ci++;
+        setTimeout(typeCmd, 20 + Math.random() * 15);
+      } else {
+        // Brief pause then show content
+        setTimeout(() => {
+          overlay.classList.remove('active');
+          document.getElementById('tab-' + target).classList.add('active');
+          if (target === 'skills') animateSkillBars();
+          tabSwitching = false;
+        }, 300);
+      }
+    }
+    typeCmd();
+  });
+});
+
+// Skill bar animation
+function animateSkillBars() {
+  document.querySelectorAll('.skill-fill').forEach(bar => {
+    bar.style.width = '0%';
+    setTimeout(() => { bar.style.width = bar.dataset.width + '%'; }, 100);
+  });
+}
+
+// References unlock
+const REFS_HASH = '4f36a8b7';
+function simpleHash(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash |= 0;
+  }
+  return (hash >>> 0).toString(16);
+}
+
+document.getElementById('refs-submit').addEventListener('click', checkRefs);
+document.getElementById('refs-password').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') checkRefs();
+});
+
+function checkRefs() {
+  const pw = document.getElementById('refs-password').value;
+  if (pw === '062795TO' || pw === 'EARL') {
+    document.getElementById('refs-lock').style.display = 'none';
+    document.getElementById('refs-content').style.display = 'block';
+  } else {
+    const err = document.getElementById('refs-error');
+    err.style.display = 'block';
+    setTimeout(() => { err.style.display = 'none'; }, 2000);
+  }
+}
+
+// Theme switcher
+document.querySelectorAll('.theme-dot').forEach(dot => {
+  dot.addEventListener('click', () => {
+    const theme = dot.dataset.theme;
+    document.documentElement.setAttribute('data-theme', theme);
+    document.querySelectorAll('.theme-dot').forEach(d => d.classList.remove('active'));
+    dot.classList.add('active');
+    localStorage.setItem('kmaslanka-theme', theme);
+  });
+});
+
+// Restore saved theme
+const savedTheme = localStorage.getItem('kmaslanka-theme');
+if (savedTheme) {
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  document.querySelectorAll('.theme-dot').forEach(d => {
+    d.classList.toggle('active', d.dataset.theme === savedTheme);
+  });
+}
+
+// Resume download
+document.getElementById('resume-download').addEventListener('click', (e) => {
+  e.preventDefault();
+  const resumeText = `KEVIN MASLANKA
+Port Washington, Wisconsin
+kevinmaslanka94@gmail.com | linkedin.com/in/kevin-maslanka
+
+PROFESSIONAL SUMMARY
+Cybersecurity professional with an investigative mindset and a background spanning IT support, physical security infrastructure, enterprise AV systems, and OSINT investigations. Early immersion in online communities and multiplayer environments sparked a deep interest in the human element of security — how attackers exploit trust, social dynamics, and publicly available information. Skilled in malware reverse engineering, threat intelligence, dark web operations, and adversary tradecraft analysis. Maintains a personal cybersecurity lab running Linux environments and security tooling. Known for translating complex technical concepts into clear, actionable guidance. Previously served 3,000+ customers, supported a $100M facility launch, and trained end users adapting to new technology platforms.
+
+TECHNICAL SKILLS
+- OSINT Investigations & Digital Footprint Analysis
+- Security Research & Threat Intelligence
+- Malware Analysis & Reverse Engineering
+- Dark Web Operations & Adversary Tradecraft
+- TCP/IP & Network Fundamentals
+- Active Directory & Windows Administration
+- Linux Environments & Security Tooling
+- Access Control & Physical Security Systems
+- Remote Troubleshooting & End-User Support
+- Technical Documentation & Reporting
+
+EXPERIENCE
+Freelance Security Engineer - WebSec B.V. (Sep 2023-Present)
+- Support senior analysts in complex OSINT investigations
+- Conduct digital footprint analysis and identity correlation
+- Document structured findings in investigative reports
+
+Key Account Manager - CH Coakley (Sep 2019-Feb 2021)
+- Sole system administrator for asset management software
+- Oversaw transfer of 20,000 items between businesses
+- Program Manager for inventory systems on commercial operations
+
+Service Desk Analyst (SDaaS) - vcpi (Mar 2019-Aug 2019)
+- Fielded 25-40 calls daily across multiple healthcare clients
+- HIPAA/OSHA/ANSI compliance, Active Directory administration
+- Proficient in ServiceNow, Citrix, and multiple RDP tools
+
+Information Systems Technician - BAYCOM, Inc. (Oct 2018-Feb 2019)
+- Installed security systems in government and restricted environments
+- Worked in 911 centers, courtrooms, police stations, and schools
+
+Custom Installation Tech - Global Sight and Sound (Apr 2018-Oct 2018)
+- Residential prewires, access control, security cameras, structured wiring
+
+Audio Visual Coordinator - CBRE GWS (Jun 2016-Apr 2018)
+- Served 3,000+ customers across Johnson Controls campuses
+- Assisted Day One opening of $100M facility project
+- Created enterprise-wide PM standards and conference room guidelines
+- Emergency Response Team first responder
+
+TECHNICAL PROJECTS
+- Community Server Infrastructure (incl. {7th Rangers} Squad - grew to ~9,000 members)
+- Discord Bot Development & Automation
+- GTA V Server Development & Modding
+
+EDUCATION
+Bachelor of Science - Cybersecurity
+CSU Global (Colorado State University System)
+
+University of Wisconsin-Milwaukee
+Criminal Justice & Political Science (2013-2014)
+
+CERTIFICATIONS (Planned)
+- CompTIA Security+
+- CompTIA CySA+
+- CompTIA Linux+
+- Certified Ethical Hacker (CEH)
+- Network+ (Coursework Completed)`;
+
+  const blob = new Blob([resumeText], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'Kevin_Maslanka_Resume.txt';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+// === BACKGROUND CYBER OPS ===
+const fbiMostWanted = [
+  'ALEXSEY BELAN', 'EVGENIY BOGACHEV', 'NICOLAS ALVAREZ-LOPEZ',
+  'MOJTABA MASOUMPOUR', 'PARK JIN HYOK', 'FUJIE WANG',
+  'BEHZAD MESRI', 'AHMAD FATHI', 'HAMID FIROOZI',
+  'ARTEM VIATCHESLAVOVICH', 'YURIY ANDRIENKO', 'PAVEL VALERYEVICH',
+  'ANATOLIY KOVALEV', 'PETR PLISKIN', 'SANDWORM TEAM OPERATOR',
+];
+
+const threatActors = [
+  'APT28 (Fancy Bear)', 'APT29 (Cozy Bear)', 'Lazarus Group',
+  'APT41 (Double Dragon)', 'Sandworm', 'Turla', 'Equation Group',
+  'DarkSide', 'REvil', 'Conti', 'LockBit 3.0', 'BlackCat/ALPHV',
+  'Scattered Spider', 'Volt Typhoon', 'Kimsuky',
+];
+
+const countries = [
+  'RU', 'CN', 'KP', 'IR', 'BY', 'VN', 'PK', 'NG', 'BR', 'UA',
+];
+
+const malwareTypes = [
+  'Ransomware', 'RAT', 'Rootkit', 'Keylogger', 'Wiper', 'Botnet C2',
+  'Spyware', 'Cryptominer', 'Backdoor', 'Loader', 'Infostealer', 'Worm',
+];
+
+const osintActions = [
+  'WHOIS lookup', 'DNS enum', 'Reverse image search', 'Social media scrape',
+  'Subdomain brute', 'Email harvest', 'Shodan query', 'Wayback snapshot',
+  'Certificate transparency log', 'Paste site monitor', 'Dark forum crawl',
+  'Blockchain trace', 'Geo-IP resolve', 'Username pivot', 'Metadata extract',
+];
+
+const codeSnippets = [
+  'if (packet.flags & SYN) { detectScan(src); }',
+  'hash_sha256 = hashlib.sha256(sample).hexdigest()',
+  'rule MAL_Cobalt { strings: $a = "beacon" }',
+  'nmap -sS -sV -O --script vuln target',
+  'volatility -f memdump.raw --profile=Win10 pslist',
+  'SELECT * FROM logs WHERE threat_level > 7',
+  'curl -s https://otx.alienvault.com/api/v1/indicators',
+  'yara -r /rules/malware.yar /suspicious/',
+  'snort -A console -c /etc/snort/snort.conf',
+  'grep -rn "eval(base64_decode" /var/www/',
+  'tcpdump -i eth0 -nn port 443 -w capture.pcap',
+  'strings malware.exe | grep -i "http://"',
+  'import pefile; pe = pefile.PE("sample.dll")',
+  'r2 -A malware.bin; afl; pdf @main',
+  'zeek -r traffic.pcap local "Site::local_nets"',
+  'sigma convert -t splunk -p sysmon rule.yml',
+  'for ioc in iocs: virustotal.scan(ioc)',
+  'ghidra.analyze(binary, decompile=True)',
+  'mimikatz # sekurlsa::logonpasswords',
+  'bloodhound-python -c All -d corp.local',
+];
+
+function randItem(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function randIP() { return `${Math.floor(Math.random()*223)+1}.${Math.floor(Math.random()*256)}.${Math.floor(Math.random()*256)}.${Math.floor(Math.random()*256)}`; }
+function randPort() { return [22,80,443,445,3389,8080,8443,4444,1337,9001,5555][Math.floor(Math.random()*11)]; }
+function randHex(n) { let s=''; for(let i=0;i<n;i++) s+='0123456789abcdef'[Math.floor(Math.random()*16)]; return s; }
+function timestamp() { const d=new Date(); return d.toISOString().replace('T',' ').substr(0,19); }
+
+function generateCyberText() {
+  const lines = [];
+  for (let i = 0; i < 120; i++) {
+    const r = Math.random();
+    if (r < 0.15) {
+      lines.push(`[${timestamp()}] ALERT: ${randItem(malwareTypes)} detected`);
+      lines.push(`  src: ${randIP()}:${randPort()} -> dst: ${randIP()}:${randPort()}`);
+      lines.push(`  sha256: ${randHex(64)}`);
+      lines.push(`  actor: ${randItem(threatActors)}`);
+      lines.push('');
+    } else if (r < 0.30) {
+      lines.push(`[OSINT] ${randItem(osintActions)} on target`);
+      lines.push(`  query: ${randItem(fbiMostWanted)}`);
+      lines.push(`  result: ${Math.floor(Math.random()*50)+1} records found`);
+      lines.push(`  origin: ${randItem(countries)} | confidence: ${Math.floor(Math.random()*40)+60}%`);
+      lines.push('');
+    } else if (r < 0.50) {
+      lines.push(`$ ${randItem(codeSnippets)}`);
+    } else if (r < 0.65) {
+      lines.push(`[FIREWALL] BLOCK ${randIP()} -> ${randIP()}:${randPort()}`);
+      lines.push(`  reason: ${randItem(['port_scan','brute_force','c2_callback','exfil_attempt','sql_injection','xss_probe'])}`);
+      lines.push('');
+    } else if (r < 0.78) {
+      lines.push(`[IDS] Signature: ET MALWARE ${randItem(threatActors)} C2 Beacon`);
+      lines.push(`  priority: ${Math.floor(Math.random()*3)+1} | sid:${Math.floor(Math.random()*9000000)+1000000}`);
+      lines.push('');
+    } else {
+      lines.push(`${randHex(8)} ${randHex(8)} ${randHex(8)} ${randHex(8)}`);
+    }
+  }
+  return lines.join('\n');
+}
+
+// Fill cyber columns
+document.getElementById('cyber-col-1').textContent = generateCyberText();
+document.getElementById('cyber-col-2').textContent = generateCyberText();
+document.getElementById('cyber-col-3').textContent = generateCyberText();
+document.getElementById('cyber-col-4').textContent = generateCyberText();
+
+// Live threat feed
+const threatFeed = document.getElementById('threat-feed');
+const maxThreats = 6;
+
+function addThreat() {
+  const types = [
+    () => `[${timestamp().substr(11)}] BLOCKED ${randIP()} (${randItem(countries)}) - ${randItem(malwareTypes)}`,
+    () => `[${timestamp().substr(11)}] OSINT: ${randItem(fbiMostWanted)} - ${randItem(osintActions)}`,
+    () => `[${timestamp().substr(11)}] IDS: ${randItem(threatActors)} activity on port ${randPort()}`,
+    () => `[${timestamp().substr(11)}] SCAN: ${randIP()} probing ${randPort()}/tcp`,
+  ];
+  const entry = document.createElement('div');
+  entry.className = 'threat-entry new';
+  entry.textContent = randItem(types)();
+  threatFeed.prepend(entry);
+  while (threatFeed.children.length > maxThreats) {
+    threatFeed.removeChild(threatFeed.lastChild);
+  }
+  setTimeout(() => entry.classList.remove('new'), 2000);
+}
+
+setInterval(addThreat, 4000);
+setTimeout(addThreat, 1500);
+</script>
+</body>
+</html>
