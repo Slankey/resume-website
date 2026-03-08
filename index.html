@@ -711,7 +711,11 @@ body::after {
           </div>
           <div class="info-block">
             <div class="label">Network</div>
-            <div class="value"><a href="https://linkedin.com/in/kevin-maslanka-625001b2" target="_blank">LinkedIn Profile</a></div>
+            <div class="value"><a href="https://www.linkedin.com/in/kevin-maslanka-625001b2/" target="_blank">LinkedIn Profile</a></div>
+          </div>
+          <div class="info-block">
+            <div class="label">GitHub</div>
+            <div class="value"><a href="https://github.com/Slankey/" target="_blank">github.com/Slankey</a></div>
           </div>
         </div>
         <div class="summary-text">
@@ -729,8 +733,8 @@ body::after {
           corporate campuses, supporting a <span class="highlight">$100M facility launch</span>, and training
           end users adapting to new technology platforms. Known for <span class="highlight">translating complex
           technical concepts</span> into clear, actionable guidance for non-technical stakeholders. Highly
-          curious, investigative, and driven to solve complex technical problems. Member of CBRE's Rising
-          Professional Organization and Emergency Response Team first responder.
+          curious, investigative, and driven to solve complex technical problems. Prior member of
+          CBRE's Rising Professional Organization and certified first responder on the Emergency Response Team.
         </div>
       </div>
 
@@ -896,8 +900,8 @@ body::after {
               <li>Created Preventative Maintenance standards adopted enterprise-wide</li>
               <li>Developed conference room guidelines referenced by project managers account-wide</li>
               <li>Maintained a multi-million dollar AV portfolio</li>
-              <li>Member of CBRE Rising Professional Organization</li>
-              <li>Emergency Response Team first responder for multiple buildings</li>
+              <li>Prior member of CBRE's Rising Professional Organization</li>
+              <li>Certified first responder on the Emergency Response Team</li>
             </ul>
           </div>
           <div class="timeline-item">
@@ -1017,6 +1021,8 @@ body::after {
           <div class="section-label" style="color:var(--accent)">// Access Granted &mdash; Clearance Verified</div>
           <div class="ref-card">
             <div class="ref-name">Michael Whittington, Ph.D.</div>
+            <div class="ref-title">National FBI Academy Graduate &mdash; Commander, Santa Clara District Attorney's Office</div>
+            <div class="ref-title">Professor, Risk Analysis &amp; Mitigation</div>
             <div class="ref-contact"><a href="tel:+14088293559">+1 (408) 829-3559</a></div>
           </div>
           <div class="ref-card">
@@ -1258,80 +1264,10 @@ if (savedTheme) {
 // Resume download
 document.getElementById('resume-download').addEventListener('click', (e) => {
   e.preventDefault();
-  const resumeText = `KEVIN MASLANKA
-Port Washington, Wisconsin
-kevinmaslanka94@gmail.com | linkedin.com/in/kevin-maslanka
-
-PROFESSIONAL SUMMARY
-Cybersecurity professional with an investigative mindset and a background spanning IT support, physical security infrastructure, enterprise AV systems, and OSINT investigations. Early immersion in online communities and multiplayer environments sparked a deep interest in the human element of security — how attackers exploit trust, social dynamics, and publicly available information. Skilled in malware reverse engineering, threat intelligence, dark web operations, and adversary tradecraft analysis. Maintains a personal cybersecurity lab running Linux environments and security tooling. Known for translating complex technical concepts into clear, actionable guidance. Previously served 3,000+ customers, supported a $100M facility launch, and trained end users adapting to new technology platforms.
-
-TECHNICAL SKILLS
-- OSINT Investigations & Digital Footprint Analysis
-- Security Research & Threat Intelligence
-- Malware Analysis & Reverse Engineering
-- Dark Web Operations & Adversary Tradecraft
-- TCP/IP & Network Fundamentals
-- Active Directory & Windows Administration
-- Linux Environments & Security Tooling
-- Access Control & Physical Security Systems
-- Remote Troubleshooting & End-User Support
-- Technical Documentation & Reporting
-
-EXPERIENCE
-Freelance Security Engineer - WebSec B.V. (Sep 2023-Present)
-- Support senior analysts in complex OSINT investigations
-- Conduct digital footprint analysis and identity correlation
-- Document structured findings in investigative reports
-
-Key Account Manager - CH Coakley (Sep 2019-Feb 2021)
-- Sole system administrator for asset management software
-- Oversaw transfer of 20,000 items between businesses
-- Program Manager for inventory systems on commercial operations
-
-Service Desk Analyst (SDaaS) - vcpi (Mar 2019-Aug 2019)
-- Fielded 25-40 calls daily across multiple healthcare clients
-- HIPAA/OSHA/ANSI compliance, Active Directory administration
-- Proficient in ServiceNow, Citrix, and multiple RDP tools
-
-Information Systems Technician - BAYCOM, Inc. (Oct 2018-Feb 2019)
-- Installed security systems in government and restricted environments
-- Worked in 911 centers, courtrooms, police stations, and schools
-
-Custom Installation Tech - Global Sight and Sound (Apr 2018-Oct 2018)
-- Residential prewires, access control, security cameras, structured wiring
-
-Audio Visual Coordinator - CBRE GWS (Jun 2016-Apr 2018)
-- Served 3,000+ customers across Johnson Controls campuses
-- Assisted Day One opening of $100M facility project
-- Created enterprise-wide PM standards and conference room guidelines
-- Emergency Response Team first responder
-
-TECHNICAL PROJECTS
-- Community Server Infrastructure (incl. {7th Rangers} Squad - grew to ~9,000 members)
-- Discord Bot Development & Automation
-- GTA V Server Development & Modding
-
-EDUCATION
-Bachelor of Science - Cybersecurity
-CSU Global (Colorado State University System)
-
-University of Wisconsin-Milwaukee
-Criminal Justice & Political Science (2013-2014)
-
-CERTIFICATIONS (Planned)
-- CompTIA Security+
-- CompTIA CySA+
-- CompTIA Linux+
-- Certified Ethical Hacker (CEH)
-- Network+ (Coursework Completed)`;
-
-  const blob = new Blob([resumeText], { type: 'text/plain' });
-  const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url;
-  a.download = 'Kevin_Maslanka_Resume.txt';
+  a.href = 'https://raw.githubusercontent.com/Slankey/resume-website/main/KEVIN%20EARL%20MASLANKA%20RESUME%20FINAL.docx';
+  a.download = 'KEVIN EARL MASLANKA RESUME FINAL.docx';
   a.click();
-  URL.revokeObjectURL(url);
 });
 
 // === BACKGROUND CYBER OPS ===
