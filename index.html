@@ -4,6 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KMASLANKA // SYSTEM TERMINAL</title>
+<meta name="description" content="Kevin Maslanka — Cybersecurity professional specializing in OSINT investigations, malware analysis, threat intelligence, and digital footprint analysis.">
+<meta name="author" content="Kevin Maslanka">
+<meta name="keywords" content="cybersecurity, OSINT, malware analysis, threat intelligence, digital forensics, security engineer">
+<meta property="og:title" content="Kevin Maslanka — Cybersecurity Portfolio">
+<meta property="og:description" content="Cybersecurity professional specializing in OSINT investigations, malware analysis, threat intelligence, and adversary tradecraft.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Kevin Maslanka — Cybersecurity Portfolio">
+<meta name="twitter:description" content="OSINT | Malware Analysis | Threat Intelligence | Digital Footprint Analysis">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Orbitron:wght@400;700&display=swap');
 
@@ -607,6 +616,42 @@ body::after {
 .theme-dot[data-theme="red"] { background: #ff3333; }
 .theme-dot[data-theme="white"] { background: #ffffff; }
 
+/* Cookie consent */
+.cookie-banner {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 10001;
+  background: var(--panel);
+  border-top: 1px solid var(--accent-dim);
+  padding: 14px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  color: var(--text);
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.5);
+}
+.cookie-banner.hidden { display: none; }
+.cookie-banner p { max-width: 600px; line-height: 1.5; }
+.cookie-banner a { color: var(--accent); text-decoration: none; }
+.cookie-btn {
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 6px 16px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.2s;
+}
+.cookie-btn:hover { background: var(--accent); color: var(--bg); }
+.cookie-btn.reject { border-color: var(--border); color: var(--text); }
+.cookie-btn.reject:hover { border-color: var(--accent-dim); color: var(--accent-dim); background: transparent; }
+
 /* Tab command overlay */
 .cmd-overlay {
   display: none;
@@ -627,12 +672,47 @@ body::after {
   50% { opacity: 0; }
 }
 
-/* Responsive */
+/* Responsive - Tablet */
 @media (max-width: 768px) {
   .about-grid, .skills-grid, .strength-grid, .edu-certs-grid { grid-template-columns: 1fr; }
-  .projects-grid { grid-template-columns: 1fr; }
+  .projects-grid { grid-template-columns: 1fr 1fr; }
   .ascii-header { font-size: 7px; }
   .nav-tab { padding: 6px 12px; font-size: 11px; }
+  .contact-bar { gap: 16px; }
+  .threat-bar { display: none; }
+}
+
+/* Responsive - Mobile */
+@media (max-width: 520px) {
+  html { font-size: 13px; }
+  #main-container { padding: 10px; }
+  .top-bar { padding: 6px 10px; font-size: 10px; letter-spacing: 1px; }
+  .top-bar > div:nth-child(2) { display: none; }
+  .ascii-header { font-size: 5px; margin: 10px 0 16px; line-height: 1.15; }
+  .subtitle-bar { font-size: 8px; letter-spacing: 3px; margin-bottom: 16px; }
+  .nav-tabs { gap: 1px; }
+  .nav-tab { padding: 6px 8px; font-size: 9px; letter-spacing: 0.5px; flex: 1; text-align: center; }
+  .nav-tab.active::before { content: ''; }
+  .window-content { padding: 14px; min-height: 200px; }
+  .section-label { font-size: 10px; letter-spacing: 2px; }
+  .projects-grid { grid-template-columns: 1fr; }
+  .project-card { padding: 14px; }
+  .info-block { padding: 12px; }
+  .info-block .label { font-size: 9px; }
+  .timeline-item { padding-left: 14px; margin-bottom: 20px; }
+  .timeline-item .role { font-size: 12px; }
+  .timeline-item li { font-size: 11px; line-height: 1.6; }
+  .contact-bar { flex-direction: column; gap: 12px; padding: 14px; text-align: center; }
+  .contact-bar a { font-size: 11px; }
+  .theme-switcher { bottom: 10px; right: 10px; padding: 4px 8px; }
+  .theme-dot { width: 12px; height: 12px; }
+  .refs-input-group { flex-direction: column; gap: 10px; }
+  #refs-password { width: 100%; }
+  .strength-grid { grid-template-columns: 1fr; }
+  .skill-name { font-size: 11px; }
+  .footer-line { font-size: 9px; }
+  .cmd-overlay { padding: 20px 14px; font-size: 12px; }
+  #boot-text { font-size: 11px; padding: 14px; }
 }
 </style>
 </head>
@@ -711,7 +791,7 @@ body::after {
           </div>
           <div class="info-block">
             <div class="label">Network</div>
-            <div class="value"><a href="https://www.linkedin.com/in/kevin-maslanka-625001b2/" target="_blank">LinkedIn Profile</a></div>
+            <div class="value"><a href="https://www.linkedin.com/in/kevin-earl-maslanka-625001b2/" target="_blank">LinkedIn Profile</a></div>
           </div>
           <div class="info-block">
             <div class="label">GitHub</div>
@@ -969,6 +1049,24 @@ body::after {
               <span class="tag">Debugging</span>
             </div>
           </div>
+          <div class="project-card">
+            <div class="proj-icon">[~]</div>
+            <div class="proj-title">OSINT Username Enumerator</div>
+            <div class="proj-desc">
+              Python-based OSINT tool that checks username existence across 70+ platforms
+              including social media, gaming, developer, and professional sites. Features
+              false-positive reduction via soft-404 detection, concurrent multi-threaded scanning,
+              GitHub API &amp; HaveIBeenPwned integration, and generates styled HTML reports.
+              Includes both GUI and CLI interfaces.
+            </div>
+            <div class="proj-tags">
+              <span class="tag">Python</span>
+              <span class="tag">OSINT</span>
+              <span class="tag">Automation</span>
+              <span class="tag">API Integration</span>
+            </div>
+            <div style="margin-top:8px"><a href="https://github.com/Slankey/OSINT-SLANK-USERNAMERATOR" target="_blank" style="color:var(--accent);font-size:11px;text-decoration:none;border-bottom:1px solid var(--accent-dim)">[&gt; View on GitHub]</a></div>
+          </div>
         </div>
       </div>
 
@@ -1054,7 +1152,7 @@ body::after {
   <!-- Contact bar -->
   <div class="contact-bar">
     <a href="mailto:kevinmaslanka94@gmail.com"><span class="lbl">Email:</span> kevinmaslanka94@gmail.com</a>
-    <a href="https://linkedin.com/in/kevin-maslanka-625001b2" target="_blank"><span class="lbl">LinkedIn:</span> kevin-maslanka</a>
+    <a href="https://www.linkedin.com/in/kevin-earl-maslanka-625001b2/" target="_blank"><span class="lbl">LinkedIn:</span> kevin-maslanka</a>
     <a href="#" id="resume-download" class="download-btn">[ Download Resume ]</a>
   </div>
 
@@ -1071,65 +1169,121 @@ body::after {
   <div class="theme-dot" data-theme="white" title="White"></div>
 </div>
 
+<!-- Cookie Consent -->
+<div class="cookie-banner" id="cookie-banner">
+  <p>This site uses local storage to remember your theme preference and skip the boot sequence on repeat visits. No tracking, no third-party cookies.</p>
+  <button class="cookie-btn" id="cookie-accept">Accept</button>
+  <button class="cookie-btn reject" id="cookie-reject">Decline</button>
+</div>
+
 <script>
+// Cookie consent
+let storageAllowed = localStorage.getItem('kmaslanka-consent') === 'yes';
+const cookieBanner = document.getElementById('cookie-banner');
+
+if (localStorage.getItem('kmaslanka-consent') !== null) {
+  cookieBanner.classList.add('hidden');
+}
+
+document.getElementById('cookie-accept').addEventListener('click', () => {
+  storageAllowed = true;
+  localStorage.setItem('kmaslanka-consent', 'yes');
+  localStorage.setItem('kmaslanka-lastvisit', Date.now().toString());
+  cookieBanner.classList.add('hidden');
+});
+
+document.getElementById('cookie-reject').addEventListener('click', () => {
+  storageAllowed = false;
+  localStorage.setItem('kmaslanka-consent', 'no');
+  localStorage.removeItem('kmaslanka-lastvisit');
+  localStorage.removeItem('kmaslanka-theme');
+  cookieBanner.classList.add('hidden');
+});
+
 // Boot sequence
 const bootMessages = [
-  'KMASLANKA SYSTEMS v2.6',
-  '========================',
+  '██████████████████████████████████████████',
+  '  DEPT OF DEFENSE // SIPR TERMINAL v2.6  ',
+  '  CLASSIFICATION: TOP SECRET // SCI      ',
+  '██████████████████████████████████████████',
   '',
-  'Initializing kernel modules...',
-  'Loading security subsystems... OK',
-  'Mounting /dev/osint... OK',
-  'Loading threat detection... OK',
-  'Scanning darknet feeds... OK',
-  'Authenticating session... OK',
-  'Decrypting personnel file... OK',
+  'POST DIAG...............................PASS',
+  'MEM  0x00000000-0x3FFFFFFF [1024MB]......PASS',
+  'COMSEC MODULE...........................PASS',
   '',
-  'SYSTEM READY.',
+  'MILSTAR-3:~# init --opcon=DEFCON-3',
+  '  [SIGINT]  /dev/sigint ..........MOUNTED',
+  '  [OSINT]   /dev/osint ...........MOUNTED',
+  '  [HUMINT]  /dev/humint ..........MOUNTED',
+  '  [CYBER]   threat-engine v4.1 ...ACTIVE',
+  '  [YARA]    2,847 signatures .....LOADED',
+  '  [DARKNET] crawler ..............STANDBY',
   '',
-  'Welcome, Operator.',
+  'MILSTAR-3:~# auth --sci --verify',
+  '  [CRYPTO]  RSA-4096 ..............VALID',
+  '  [IDENT]   MASLANKA, KEVIN E. ...MATCHED',
+  '  [ACCESS]  TS//SCI CLEARANCE ....GRANTED',
+  '',
+  '*** SECURE TERMINAL ESTABLISHED ***',
+  '> COMMS ONLINE. STANDING BY, OPERATOR.',
 ];
 
 const bootEl = document.getElementById('boot-text');
 const bootScreen = document.getElementById('boot-screen');
 const mainContainer = document.getElementById('main-container');
-let msgIndex = 0;
-let charIndex = 0;
-let bootContent = '';
 
-function typeBoot() {
-  if (msgIndex >= bootMessages.length) {
-    setTimeout(() => {
-      bootScreen.classList.add('hidden');
-      mainContainer.classList.add('visible');
-      animateSkillBars();
-    }, 600);
-    return;
-  }
-  const line = bootMessages[msgIndex];
-  if (charIndex < line.length) {
-    bootContent += line[charIndex];
-    bootEl.textContent = bootContent + '_';
-    charIndex++;
-    setTimeout(typeBoot, 15 + Math.random() * 15);
-  } else {
-    bootContent += '\n';
-    bootEl.textContent = bootContent + '_';
-    msgIndex++;
-    charIndex = 0;
-    setTimeout(typeBoot, msgIndex === bootMessages.length - 1 ? 400 : 80);
-  }
-}
+// Skip boot if visited within 3 hours and consent given
+const lastVisit = parseInt(localStorage.getItem('kmaslanka-lastvisit') || '0');
+const threeHours = 3 * 60 * 60 * 1000;
+const skipBoot = storageAllowed && (Date.now() - lastVisit < threeHours);
 
-bootScreen.addEventListener('click', () => {
-  bootContent = bootMessages.join('\n');
-  bootEl.textContent = bootContent;
+function finishBoot() {
   bootScreen.classList.add('hidden');
   mainContainer.classList.add('visible');
   animateSkillBars();
-});
+  if (storageAllowed) localStorage.setItem('kmaslanka-lastvisit', Date.now().toString());
+}
 
-setTimeout(typeBoot, 500);
+if (skipBoot) {
+  bootScreen.classList.add('hidden');
+  mainContainer.style.transition = 'none';
+  mainContainer.classList.add('visible');
+  animateSkillBars();
+} else {
+  let msgIndex = 0;
+  let charIndex = 0;
+  let bootContent = '';
+
+  function typeBoot() {
+    if (msgIndex >= bootMessages.length) {
+      setTimeout(finishBoot, 500);
+      return;
+    }
+    const line = bootMessages[msgIndex];
+    if (charIndex < line.length) {
+      bootContent += line[charIndex];
+      bootEl.textContent = bootContent;
+      charIndex++;
+      setTimeout(typeBoot, 8 + Math.random() * 8);
+    } else {
+      bootContent += '\n';
+      bootEl.textContent = bootContent;
+      msgIndex++;
+      charIndex = 0;
+      // Fast dump for dotted lines, brief pause for blank lines and final message
+      const nextDelay = msgIndex >= bootMessages.length - 1 ? 300 :
+                        bootMessages[msgIndex - 1] === '' ? 50 : 25;
+      setTimeout(typeBoot, nextDelay);
+    }
+  }
+
+  bootScreen.addEventListener('click', () => {
+    bootEl.textContent = bootMessages.join('\n');
+    finishBoot();
+  });
+
+  setTimeout(typeBoot, 300);
+}
 
 // Clock
 function updateClock() {
@@ -1248,7 +1402,7 @@ document.querySelectorAll('.theme-dot').forEach(dot => {
     document.documentElement.setAttribute('data-theme', theme);
     document.querySelectorAll('.theme-dot').forEach(d => d.classList.remove('active'));
     dot.classList.add('active');
-    localStorage.setItem('kmaslanka-theme', theme);
+    if (storageAllowed) localStorage.setItem('kmaslanka-theme', theme);
   });
 });
 
