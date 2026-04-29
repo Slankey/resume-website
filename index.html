@@ -1280,7 +1280,7 @@ if (skipBoot) {
 
   function typeBoot() {
     if (msgIndex >= bootMessages.length) {
-      setTimeout(finishBoot, 500);
+      setTimeout(finishBoot, 200);
       return;
     }
     const line = bootMessages[msgIndex];
@@ -1288,15 +1288,14 @@ if (skipBoot) {
       bootContent += line[charIndex];
       bootEl.textContent = bootContent;
       charIndex++;
-      setTimeout(typeBoot, 8 + Math.random() * 8);
+      setTimeout(typeBoot, 2 + Math.random() * 2);
     } else {
       bootContent += '\n';
       bootEl.textContent = bootContent;
       msgIndex++;
       charIndex = 0;
-      // Fast dump for dotted lines, brief pause for blank lines and final message
-      const nextDelay = msgIndex >= bootMessages.length - 1 ? 300 :
-                        bootMessages[msgIndex - 1] === '' ? 50 : 25;
+      const nextDelay = msgIndex >= bootMessages.length - 1 ? 80 :
+                        bootMessages[msgIndex - 1] === '' ? 12 : 6;
       setTimeout(typeBoot, nextDelay);
     }
   }
@@ -1306,7 +1305,7 @@ if (skipBoot) {
     finishBoot();
   });
 
-  setTimeout(typeBoot, 300);
+  setTimeout(typeBoot, 100);
 }
 
 // Clock
