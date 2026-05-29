@@ -750,7 +750,7 @@ body::after {
 | . \ | |  | |/ ___ \ ___) | |___ / ___ \| |\  | . \  / ___ \
 |_|\_\|_|  |_/_/   \_\____/|_____/_/   \_\_| \_|_|\_\/_/   \_\</div>
 
-  <div class="subtitle-bar">Cybersecurity // OSINT // Malware Analysis // Terrorism Research // Emergency Management</div>
+  <div class="subtitle-bar">Cybersecurity // OSINT // Malware Analysis // Terrorism Research // Emergency Management // Homelab Engineering</div>
 
   <div class="nav-tabs">
     <div class="nav-tab active" data-tab="about">About</div>
@@ -1114,30 +1114,53 @@ body::after {
             <div class="proj-icon">[&gt;_]</div>
             <div class="proj-title">Story TTS Studio</div>
             <div class="proj-desc">
-              Full-stack long-form text-to-speech platform built and deployed on a CPU-only homelab server
-              (AMD Phenom II, 2009 hardware). Solved a hard infrastructure constraint — all modern ML
-              inference libraries (numpy, onnxruntime, torch) require AVX instructions unavailable on
-              this CPU — by compiling numpy from source targeting the host architecture, unlocking
-              local ONNX inference on legacy hardware without a GPU or cloud compute budget.
-              Features segmented batch generation with live SSE progress streaming, per-segment
-              playback and download, full-story MP3 merge via ffmpeg, persistent story library,
-              100GB storage cap enforcement, and auth-gated access. Integrated Microsoft Azure Neural
-              TTS (Edge) with 20+ curated narration voices and fine-grained speed control.
-              Demonstrates end-to-end ownership: infrastructure diagnosis, compiler-level problem
-              solving, full-stack Flask/SQLite backend, and polished frontend UX.
+              Engineered and self-hosted a full-stack long-form text-to-speech platform on personal
+              homelab infrastructure. Designed the system architecture, generation pipeline, and
+              deployment stack from scratch — including diagnosing and solving a hard CPU compatibility
+              constraint (AMD Phenom II lacking AVX instructions) by cross-compiling numpy from source
+              to unlock local ONNX inference on legacy hardware.
+              Built on Python/Flask with SQLite persistence, segmented batch generation with live
+              real-time progress streaming (SSE), per-segment playback, full-story MP3 assembly via
+              ffmpeg, 100GB storage cap enforcement, and authenticated access control.
+              Integrates Microsoft Azure Neural TTS (Edge TTS) for voice synthesis — voices and
+              cloud inference provided by Microsoft; pipeline architecture, UI, and infrastructure
+              engineering by me.
             </div>
             <div class="proj-tags">
-              <span class="tag">Python</span>
-              <span class="tag">Flask</span>
-              <span class="tag">TTS / AI</span>
-              <span class="tag">Linux</span>
-              <span class="tag">Systems</span>
+              <span class="tag">Systems Engineering</span>
+              <span class="tag">Python / Flask</span>
+              <span class="tag">Azure Neural TTS</span>
+              <span class="tag">Linux / Homelab</span>
               <span class="tag">SSE</span>
               <span class="tag">ffmpeg</span>
-              <span class="tag">Homelab</span>
+              <span class="tag">SQLite</span>
             </div>
             <div style="margin-top:8px">
               <a href="https://story.kevsec.com" target="_blank" style="color:var(--accent);font-size:11px;text-decoration:none;border-bottom:1px solid var(--accent-dim)">[&gt; Live Site]</a>
+            </div>
+          </div>
+          <div class="project-card">
+            <div class="proj-icon">[©]</div>
+            <div class="proj-title">KEVSEC Bib — APA 7 Citation Manager</div>
+            <div class="proj-desc">
+              Designed and self-hosted a full-stack academic citation manager as an alternative to
+              MyBib.com. Supports auto-fetching metadata from DOIs (CrossRef API), ISBNs (Open Library),
+              and arbitrary URLs via HTML scraping (OpenGraph + JSON-LD). Generates correctly formatted
+              APA 7 references for journal articles, books, and webpages — including group/organizational
+              authors, n.d. handling, and Retrieved clauses. Features multi-project management,
+              BibTeX and RIS bulk import with checklist preview, and one-click export to Word (.docx)
+              with real italic runs, Times New Roman, and hanging indent formatting.
+            </div>
+            <div class="proj-tags">
+              <span class="tag">Python / Flask</span>
+              <span class="tag">APA 7</span>
+              <span class="tag">Web Scraping</span>
+              <span class="tag">python-docx</span>
+              <span class="tag">SQLite</span>
+              <span class="tag">Homelab</span>
+            </div>
+            <div style="margin-top:8px">
+              <a href="https://bib.kevsec.com" target="_blank" style="color:var(--accent);font-size:11px;text-decoration:none;border-bottom:1px solid var(--accent-dim)">[&gt; Live Site]</a>
             </div>
           </div>
         </div>
